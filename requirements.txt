@@ -1,6 +1,3 @@
-python-dotenv
 azure-identity
-openai>=1.0.0
-# azure-ai-projects includes azure-ai-agents
-azure-ai-projects --pre
-aiohttp 
+aiohttp
+azure-ai-projects==1.0.0b12 

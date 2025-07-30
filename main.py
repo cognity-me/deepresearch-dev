@@ -9,7 +9,13 @@ from dotenv import load_dotenv
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agents.aio import AgentsClient
-from azure.ai.agents.models import DeepResearchTool, MessageRole, ThreadMessage
+from azure.ai.agents.models import (
+    BingGroundingToolDefinition,
+    BingGroundingSearchConfiguration,
+    BingGroundingSearchToolParameters,
+    MessageRole, 
+    ThreadMessage
+)
 from azure.identity.aio import DefaultAzureCredential
 from openai import AsyncAzureOpenAI
 
@@ -82,9 +88,14 @@ class DeepResearchAssistant:
             bing_connection = await self.project_client.connections.get(name=bing_connection_name)
             
             # Define Deep Research tool
-            deep_research_tool = DeepResearchTool(
-                bing_grounding_connection_id=bing_connection.id,
-                deep_research_model=deep_research_model,
+            deep_research_tool = BingGroundingToolDefinition(
+                bing_grounding=BingGroundingSearchToolParameters(
+                    search_configurations=[
+                        BingGroundingSearchConfiguration(
+                            connection_id=bing_connection.id
+                        )
+                    ]
+                )
             )
             
             # Create agent
@@ -95,7 +106,7 @@ class DeepResearchAssistant:
                 instructions="""You are an advanced research assistant that helps users create comprehensive, 
                 professional research reports. You excel at understanding user requirements through natural 
                 conversation and producing high-quality, structured reports with tables, charts, and proper citations.""",
-                tools=deep_research_tool.definitions,
+                tools=[deep_research_tool],
             )
             
             # Create thread
